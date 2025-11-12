@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Signup - Guardian Eye</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a th:href="@{/}" class="back-home">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="auth-logo">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Guardian Family</span>
+                </div>
+                <h1>Join as Family</h1>
+                <p>Help protect your loved ones</p>
+            </div>
+
+            <form class="auth-form" th:action="@{/api/family}" method="post" id="familySignupForm">
+                <div class="form-group">
+                    <label for="familyName">Your Name *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="familyName" name="name" placeholder="Enter your full name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="familyEmail">Email Address *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="familyEmail" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="familyPhone">Phone Number *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="familyPhone" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userToConnect">Connect to User</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-link"></i>
+                        <input type="text" id="userToConnect" name="userEmail" placeholder="Enter user's email to connect">
+                        <small>Enter the email of the user you want to protect</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="relationship">Relationship *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-heart"></i>
+                        <select id="relationship" name="relationship" required>
+                            <option value="">Select Relationship</option>
+                            <option value="Father">Father</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Brother">Brother</option>
+                            <option value="Sister">Sister</option>
+                            <option value="Husband">Husband</option>
+                            <option value="Wife">Wife</option>
+                            <option value="Son">Son</option>
+                            <option value="Daughter">Daughter</option>
+                            <option value="Friend">Friend</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="familyPassword">Password *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="familyPassword" name="password" placeholder="Create a password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('familyPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="familyConfirmPassword">Confirm Password *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="familyConfirmPassword" placeholder="Confirm your password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('familyConfirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="familyTerms" required>
+                        <span class="checkmark"></span>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="emergencyContact" name="isEmergencyContact">
+                        <span class="checkmark"></span>
+                        I want to be an emergency contact
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary btn-full">
+                    <i class="fas fa-user-friends"></i>
+                    Join as Family Member
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have a family account? <a th:href="@{/family-login}">Sign in here</a></p>
+                <p>Are you a user? <a th:href="@{/signup}">User signup</a></p>
+            </div>
+        </div>
+
+        <div class="auth-hero family-hero">
+            <div class="hero-content">
+                <h2>Protect Your Loved Ones</h2>
+                <p>As a family member, you play a crucial role in the safety network of your loved ones.</p>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <i class="fas fa-bell"></i>
+                        <div>
+                            <h4>Instant Alerts</h4>
+                            <p>Receive emergency notifications</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Location Access</h4>
+                            <p>View real-time location</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h4>Safety Monitoring</h4>
+                            <p>Monitor safety patterns</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/auth.js}"></script>
+</body>
+</html>

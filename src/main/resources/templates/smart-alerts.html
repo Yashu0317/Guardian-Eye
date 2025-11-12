@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Alerts - Guardian Eye</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-logo i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-signup:hover {
+            background-color: #c0392b;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Smart Alerts Header */
+        .smart-alerts-header {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .smart-alerts-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .smart-alerts-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Alerts Overview */
+        .alerts-overview {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .overview-card {
+            background: #f8f9fa;
+            padding: 30px 25px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #f39c12;
+        }
+
+        .overview-card i {
+            font-size: 2.5rem;
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+
+        .overview-card h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .overview-card p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        /* Active Alerts */
+        .active-alerts {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .alerts-list {
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .alert-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #f39c12;
+            transition: transform 0.3s;
+        }
+
+        .alert-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .alert-type {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f39c12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .alert-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.2rem;
+        }
+
+        .alert-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .alert-time {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .alert-content {
+            margin-bottom: 20px;
+        }
+
+        .alert-message {
+            color: #2c3e50;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .alert-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        /* Smart Alert Settings */
+        .alert-settings {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .setting-group {
+            margin-bottom: 30px;
+        }
+
+        .setting-group h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #f39c12;
+            padding-bottom: 10px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .setting-item:hover {
+            background: #e9ecef;
+        }
+
+        .setting-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .setting-info p {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #f39c12;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Alert Patterns */
+        .alert-patterns {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .patterns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .pattern-item {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .pattern-item i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #f39c12;
+        }
+
+        .pattern-item h3 {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .pattern-item p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 60px 0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #f39c12;
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+
+        .action-btn h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        /* Alert Status */
+        .alert-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .status-resolved {
+            background: #2ecc71;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link, .btn-signup {
+                width: 100%;
+                text-align: center;
+                margin: 2px 0;
+            }
+
+            .smart-alerts-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .smart-alerts-header p {
+                font-size: 1.1rem;
+            }
+            
+            .overview-cards {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .alert-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .alert-settings {
+                padding: 30px 20px;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .alert-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .smart-alerts-header {
+                padding: 40px 0;
+            }
+            
+            .alerts-overview, .active-alerts, .quick-actions {
+                padding: 40px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-access {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-outline {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Guardian Eye</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <a th:href="@{/}" class="nav-link">Home</a>
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                    <a th:href="@{/emergency}" class="nav-link">Emergency</a>
+                    <a th:href="@{/location}" class="nav-link">Location</a>
+                    <a th:href="@{/contacts}" class="nav-link">Contacts</a>
+                    <a th:href="@{/smart-alerts}" class="nav-link active">Smart Alerts</a>
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                    <a th:href="@{/signup}" class="btn-signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Smart Alerts Header -->
+    <section class="smart-alerts-header">
+        <div class="container">
+            <h1>Smart Safety Alerts</h1>
+            <p>Intelligent alerts based on your movement patterns and safety conditions</p>
+        </div>
+    </section>
+
+    <!-- Alerts Overview -->
+    <section class="alerts-overview">
+        <div class="container">
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <i class="fas fa-bell"></i>
+                    <h3 id="totalAlerts">12</h3>
+                    <p>Total Alerts This Week</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3 id="activeAlerts">2</h3>
+                    <p>Active Alerts</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3 id="safetyScore">94%</h3>
+                    <p>Safety Score</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-clock"></i>
+                    <h3 id="responseTime">45s</h3>
+                    <p>Avg Response Time</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Alerts -->
+    <section class="active-alerts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Active Alerts</h2>
+                <p>Current safety alerts and notifications</p>
+            </div>
+
+            <div class="alerts-list" id="alertsList">
+                <!-- Alerts will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Alert Settings -->
+    <section class="alert-settings">
+        <div class="container">
+            <div class="section-title">
+                <h2>Smart Alert Settings</h2>
+                <p>Configure intelligent safety alerts based on your patterns</p>
+            </div>
+
+            <div class="settings-grid">
+                <div>
+                    <div class="setting-group">
+                        <h3>Movement Alerts</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Unusual Route Detection</h4>
+                                <p>Alert when taking unusual routes</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Speed Monitoring</h4>
+                                <p>Alert for unusual speed patterns</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Extended Stops</h4>
+                                <p>Alert for unexpected long stops</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Location Alerts</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Safe Zone Alerts</h4>
+                                <p>Alert when leaving safe zones</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>High-Risk Area Detection</h4>
+                                <p>Alert when entering risky areas</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="setting-group">
+                        <h3>Time-based Alerts</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Late Night Activity</h4>
+                                <p>Alert for unusual late-night movement</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Schedule Deviation</h4>
+                                <p>Alert when off regular schedule</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3>Emergency Alerts</h3>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Fall Detection</h4>
+                                <p>Automatic fall detection alerts</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Shake for Help</h4>
+                                <p>Alert when phone is shaken vigorously</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Battery Alerts</h4>
+                                <p>Alert when battery is critically low</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Alert Patterns -->
+    <section class="alert-patterns">
+        <div class="container">
+            <div class="section-title" style="color: white;">
+                <h2>Intelligent Alert Patterns</h2>
+                <p>Advanced safety monitoring based on behavioral patterns</p>
+            </div>
+            <div class="patterns-grid">
+                <div class="pattern-item">
+                    <i class="fas fa-route"></i>
+                    <h3>Route Analysis</h3>
+                    <p>Learn your regular routes and detect deviations that might indicate danger</p>
+                </div>
+                <div class="pattern-item">
+                    <i class="fas fa-clock"></i>
+                    <h3>Time Patterns</h3>
+                    <p>Monitor your daily schedule and alert for unusual activity times</p>
+                </div>
+                <div class="pattern-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Location Intelligence</h3>
+                    <p>Smart detection of safe and risky areas based on community data</p>
+                </div>
+                <div class="pattern-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Behavioral Analysis</h3>
+                    <p>Continuous learning of your movement patterns for better protection</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Quick Actions</h2>
+            <div class="action-buttons">
+                <a th:href="@{/emergency}" class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <h4>Emergency Alert</h4>
+                </a>
+                <a th:href="@{/location}" class="action-btn">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Location Sharing</h4>
+                </a>
+                <a th:href="@{/safe-places}" class="action-btn">
+                    <i class="fas fa-home"></i>
+                    <h4>Safe Places</h4>
+                </a>
+                <a th:href="@{/dashboard}" class="action-btn">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Dashboard</h4>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="quick-access">
+                <a th:href="@{/dashboard}" class="btn-outline">Go to Dashboard</a>
+                <a th:href="@{/}" class="btn-outline">Back to Home</a>
+                <a th:href="@{/login}" class="btn-outline">Login</a>
+            </div>
+            <p>&copy; 2024 Guardian Eye. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+                const icon = menuToggle.querySelector('i');
+                
+                navMenu.classList.remove('active');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Smart alerts management
+        let alerts = JSON.parse(localStorage.getItem('guardianEyeAlerts')) || [];
+
+        // Sample alerts for demo
+        const sampleAlerts = [
+            {
+                id: '1',
+                type: 'unusual_route',
+                title: 'Unusual Route Detected',
+                message: 'You have deviated from your regular route to work. This might indicate an unexpected situation.',
+                location: 'Near Connaught Place, Delhi',
+                timestamp: new Date(Date.now() - 30 * 60000).toISOString(), // 30 minutes ago
+                status: 'active',
+                icon: 'fas fa-route',
+                priority: 'high'
+            },
+            {
+                id: '2',
+                type: 'safe_zone',
+                title: 'Left Safe Zone',
+                message: 'You have left your designated safe zone. Would you like to check in?',
+                location: 'Civil Lines, Delhi',
+                timestamp: new Date(Date.now() - 2 * 3600000).toISOString(), // 2 hours ago
+                status: 'warning',
+                icon: 'fas fa-map-marker-alt',
+                priority: 'medium'
+            },
+            {
+                id: '3',
+                type: 'battery',
+                title: 'Low Battery Alert',
+                message: 'Your phone battery is at 15%. This may affect safety monitoring.',
+                location: 'Your current location',
+                timestamp: new Date(Date.now() - 6 * 3600000).toISOString(), // 6 hours ago
+                status: 'info',
+                icon: 'fas fa-battery-quarter',
+                priority: 'medium'
+            },
+            {
+                id: '4',
+                type: 'schedule',
+                title: 'Schedule Deviation',
+                message: 'You are running late from your regular schedule. Everything okay?',
+                location: 'Near Home',
+                timestamp: new Date(Date.now() - 24 * 3600000).toISOString(), // 1 day ago
+                status: 'resolved',
+                icon: 'fas fa-clock',
+                priority: 'low'
+            }
+        ];
+
+        function initializeAlerts() {
+            if (alerts.length === 0) {
+                alerts = sampleAlerts;
+                saveAlerts();
+            }
+            updateOverview();
+            renderAlerts();
+        }
+
+        function renderAlerts() {
+            const list = document.getElementById('alertsList');
+            list.innerHTML = '';
+            
+            // Sort alerts by timestamp (newest first) and status
+            const sortedAlerts = [...alerts].sort((a, b) => {
+                // Active alerts first
+                if (a.status === 'active' && b.status !== 'active') return -1;
+                if (b.status === 'active' && a.status !== 'active') return 1;
+                
+                // Then by timestamp
+                return new Date(b.timestamp) - new Date(a.timestamp);
+            });
+            
+            sortedAlerts.forEach(alert => {
+                const alertItem = document.createElement('div');
+                alertItem.className = 'alert-item';
+                
+                const timeAgo = getTimeAgo(alert.timestamp);
+                const statusClass = `status-${alert.status}`;
+                
+                alertItem.innerHTML = `
+                    <div class="alert-header">
+                        <div class="alert-type">
+                            <div class="alert-icon">
+                                <i class="${alert.icon}"></i>
+                            </div>
+                            <div class="alert-info">
+                                <h4>${alert.title}</h4>
+                                <p>Smart Safety Alert</p>
+                            </div>
+                        </div>
+                        <div class="alert-status ${statusClass}">${alert.status}</div>
+                    </div>
+                    <div class="alert-content">
+                        <div class="alert-message">${alert.message}</div>
+                        <div class="alert-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${alert.location}</span>
+                        </div>
+                    </div>
+                    <div class="alert-time">
+                        <i class="fas fa-clock"></i>
+                        ${timeAgo}
+                    </div>
+                    <div class="alert-actions">
+                        ${alert.status === 'active' ? `
+                        <button class="btn btn-success" onclick="resolveAlert('${alert.id}')">
+                            <i class="fas fa-check"></i> Mark Resolved
+                        </button>
+                        ` : ''}
+                        <button class="btn btn-primary" onclick="viewAlertDetails('${alert.id}')">
+                            <i class="fas fa-info-circle"></i> Details
+                        </button>
+                        ${alert.status !== 'resolved' ? `
+                        <button class="btn btn-warning" onclick="snoozeAlert('${alert.id}')">
+                            <i class="fas fa-bell-slash"></i> Snooze
+                        </button>
+                        ` : ''}
+                    </div>
+                `;
+                
+                list.appendChild(alertItem);
+            });
+        }
+
+        function resolveAlert(id) {
+            const alert = alerts.find(a => a.id === id);
+            if (alert) {
+                alert.status = 'resolved';
+                saveAlerts();
+                renderAlerts();
+                updateOverview();
+                showNotification('Alert marked as resolved');
+            }
+        }
+
+        function snoozeAlert(id) {
+            const alert = alerts.find(a => a.id === id);
+            if (alert) {
+                // In a real app, this would snooze the alert for a period
+                showNotification('Alert snoozed for 1 hour');
+            }
+        }
+
+        function viewAlertDetails(id) {
+            const alert = alerts.find(a => a.id === id);
+            if (alert) {
+                alert(`Alert Details:\n\nTitle: ${alert.title}\nMessage: ${alert.message}\nLocation: ${alert.location}\nTime: ${new Date(alert.timestamp).toLocaleString()}\nStatus: ${alert.status}`);
+            }
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const alertTime = new Date(timestamp);
+            const diffMs = now - alertTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} min ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        }
+
+        function updateOverview() {
+            document.getElementById('totalAlerts').textContent = alerts.filter(a => 
+                new Date(a.timestamp) > new Date(Date.now() - 7 * 86400000) // Last 7 days
+            ).length;
+            
+            document.getElementById('activeAlerts').textContent = alerts.filter(a => 
+                a.status === 'active' || a.status === 'warning'
+            ).length;
+            
+            document.getElementById('safetyScore').textContent = '94%';
+            document.getElementById('responseTime').textContent = '45s';
+        }
+
+        function saveAlerts() {
+            localStorage.setItem('guardianEyeAlerts', JSON.stringify(alerts));
+        }
+
+        function showNotification(message) {
+            // Create a simple notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #2ecc71;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                font-weight: bold;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // Simulate new alert (for demo purposes)
+        function simulateNewAlert() {
+            const alertTypes = [
+                {
+                    type: 'movement',
+                    title: 'Unusual Movement Pattern',
+                    message: 'Detected unusual movement pattern in your current location.',
+                    icon: 'fas fa-walking',
+                    priority: 'medium'
+                },
+                {
+                    type: 'location',
+                    title: 'Entered High-Risk Area',
+                    message: 'You have entered an area with recent safety incidents.',
+                    icon: 'fas fa-exclamation-triangle',
+                    priority: 'high'
+                }
+            ];
+            
+            const randomAlert = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+            const newAlert = {
+                id: Date.now().toString(),
+                ...randomAlert,
+                location: 'Your current location',
+                timestamp: new Date().toISOString(),
+                status: 'active'
+            };
+            
+            alerts.unshift(newAlert);
+            saveAlerts();
+            renderAlerts();
+            updateOverview();
+            
+            showNotification(`New alert: ${newAlert.title}`);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAlerts();
+            
+            // Simulate a new alert every 2 minutes for demo (optional)
+            // setInterval(simulateNewAlert, 120000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Information</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .debug-info { background: #f5f5f5; padding: 20px; border-radius: 10px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Debug Information</h1>
+    <div class="debug-info" th:utext="${debugInfo}"></div>
+    <br>
+    <a href="/login">Go to Login</a> | 
+    <a href="/">Go to Home</a>
+</body>
+</html>

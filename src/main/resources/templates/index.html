@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Eye - Women Safety Application</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="landing-page">
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="navbar transparent">
+            <div class="container">
+                <div class="nav-container">
+                    <div class="nav-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Guardian Eye</span>
+                    </div>
+                    <div class="nav-menu" id="navMenu">
+                        <a href="#features" class="nav-link">Features</a>
+                        <a href="#how-it-works" class="nav-link">How It Works</a>
+                        <a href="#testimonials" class="nav-link">Testimonials</a>
+                        <div class="auth-buttons">
+                            <a th:href="@{/login}" class="btn-login">Login</a>
+                            <a th:href="@{/signup}" class="btn-signup">Sign Up</a>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Your Safety, Our <span class="highlight">Priority</span></h1>
+                    <p class="hero-description">
+                        Guardian Eye is a comprehensive women safety application that provides instant emergency alerts, 
+                        location sharing, and quick access to help when you need it most.
+                    </p>
+                   <!-- In Hero Section - Replace the existing hero-buttons div with this: -->
+<div class="hero-buttons">
+    <a th:href="@{/signup}" class="btn-primary btn-large">
+        <i class="fas fa-shield-alt"></i>
+        Get Started Free
+    </a>
+    <a href="#features" class="btn-secondary btn-large">
+        <i class="fas fa-play-circle"></i>
+        Watch Demo
+    </a>
+    <a th:href="@{/dashboard}" class="btn-dashboard btn-large">
+        <i class="fas fa-tachometer-alt"></i>
+        Go to Dashboard
+    </a>
+    <!-- Add this new Family Network button -->
+    <a th:href="@{/userfamily}" class="btn-family btn-large">
+        <i class="fas fa-user-friends"></i>
+        Family Network
+    </a>
+</div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <h3>10,000+</h3>
+                            <p>Protected Users</p>
+                        </div>
+                        <div class="stat">
+                            <h3>50,000+</h3>
+                            <p>Emergency Alerts</p>
+                        </div>
+                        <div class="stat">
+                            <h3>24/7</h3>
+                            <p>Active Support</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="app-interface">
+                                <div class="app-header">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Guardian Eye</span>
+                                </div>
+                                <div class="emergency-button">
+                                    <i class="fas fa-bell"></i>
+                                    <span>EMERGENCY</span>
+                                </div>
+                                <div class="quick-actions">
+                                    <div class="action">
+                                        <i class="fas fa-location-arrow"></i>
+                                        <span>Share Location</span>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fas fa-phone-alt"></i>
+                                        <span>Call Help</span>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fas fa-user-friends"></i>
+                                        <span>Contacts</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wave-divider">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Powerful Safety Features</h2>
+                <p>Everything you need to feel safe and protected</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon emergency">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>One-Tap Emergency</h3>
+                    <p>Instant emergency alerts sent to your trusted contacts with your live location</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon location">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Live Location Sharing</h3>
+                    <p>Share your real-time location with family and emergency contacts</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon family">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>Family Network</h3>
+                    <p>Connect with family members who can monitor your safety</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon quick">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Quick Dial</h3>
+                    <p>Instant access to emergency services and trusted contacts</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon safe">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Safe Places</h3>
+                    <p>Mark and navigate to safe locations in your area</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Smart Alerts</h3>
+                    <p>Automatic alerts based on location and time patterns</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How Guardian Eye Works</h2>
+                <p>Simple steps to ensure your safety</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Sign Up & Setup</h3>
+                        <p>Create your account and add emergency contacts</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Connect Family</h3>
+                        <p>Invite family members to join your safety network</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Stay Protected</h3>
+                        <p>Use emergency features when needed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>Trusted by Thousands</h2>
+                <p>See what our users say about Guardian Eye</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Guardian Eye gave me the confidence to travel alone. The emergency features are incredibly reliable."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Priya Sharma</h4>
+                            <p>College Student</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"As a working professional who travels late, this app is a lifesaver. My family feels much more secure."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Anjali Patel</h4>
+                            <p>Software Engineer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"The family connection feature helps me keep track of my daughter's safety. Highly recommended!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Rajesh Kumar</h4>
+                            <p>Parent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+           <!-- In CTA Section - Replace the existing cta-buttons div with this: -->
+<div class="cta-buttons">
+    <a th:href="@{/signup}" class="btn-primary btn-large">
+        <i class="fas fa-shield-alt"></i>
+        Start Protecting Yourself
+    </a>
+    <a th:href="@{/family-signup}" class="btn-secondary btn-large">
+        <i class="fas fa-user-friends"></i>
+        Join as Family Member
+    </a>
+    <a th:href="@{/dashboard}" class="btn-dashboard btn-large">
+        <i class="fas fa-tachometer-alt"></i>
+        Go to Dashboard
+    </a>
+    <!-- Add this new Family Network button -->
+    <a th:href="@{/userfamily}" class="btn-family btn-large">
+        <i class="fas fa-users"></i>
+        Family Network
+    </a>
+</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Guardian Eye</span>
+                    </div>
+                    <p>Your safety is our mission. We're committed to providing reliable protection for women everywhere.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a th:href="@{/login}">User Login</a></li>
+                        <li><a th:href="@{/family-login}">Family Login</a></li>
+                        <li><a th:href="@{/signup}">User Signup</a></li>
+                        <li><a th:href="@{/family-signup}">Family Signup</a></li>
+                        <li><a th:href="@{/dashboard}">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Emergency Guide</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Guardian Eye. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

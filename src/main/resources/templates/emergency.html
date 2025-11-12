@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency - Guardian Eye</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-logo i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-signup:hover {
+            background-color: #c0392b;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Emergency Header */
+        .emergency-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .emergency-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .emergency-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Emergency Actions */
+        .emergency-actions {
+            padding: 60px 0;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .action-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .action-card.emergency {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #fff 0%, #ffeaea 100%);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .action-card.emergency .action-icon {
+            background: #e74c3c;
+            animation: pulse 2s infinite;
+        }
+
+        .action-card .action-icon {
+            background: #3498db;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .action-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .action-card p {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+            text-align: center;
+            min-width: 150px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .btn-emergency {
+            background-color: #e74c3c;
+            color: white;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px #e74c3c;
+            }
+            to {
+                box-shadow: 0 0 20px #e74c3c, 0 0 30px #e74c3c;
+            }
+        }
+
+        .btn-emergency:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Emergency Contacts */
+        .emergency-contacts {
+            background: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: #f8f9fa;
+            padding: 30px 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            border-left: 4px solid #3498db;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .contact-card p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .contact-card .phone {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            text-decoration: none;
+        }
+
+        .contact-card .phone:hover {
+            text-decoration: underline;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 60px 0;
+        }
+
+        .quick-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .quick-btn {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3498db;
+        }
+
+        .quick-btn i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .quick-btn h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link, .btn-signup {
+                width: 100%;
+                text-align: center;
+                margin: 2px 0;
+            }
+
+            .emergency-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .emergency-header p {
+                font-size: 1.1rem;
+            }
+            
+            .action-card {
+                padding: 30px 20px;
+            }
+            
+            .action-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .emergency-header {
+                padding: 40px 0;
+            }
+            
+            .emergency-actions, .emergency-contacts, .quick-actions {
+                padding: 40px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .quick-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-access {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-outline {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Guardian Eye</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <a th:href="@{/}" class="nav-link">Home</a>
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                    <a th:href="@{/emergency}" class="nav-link active">Emergency</a>
+                    <a th:href="@{/location}" class="nav-link">Location</a>
+                    <a th:href="@{/contacts}" class="nav-link">Contacts</a>
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                    <a th:href="@{/signup}" class="btn-signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Emergency Header -->
+    <section class="emergency-header">
+        <div class="container">
+            <h1>Emergency Assistance</h1>
+            <p>One-tap emergency alerts and immediate help when you need it most</p>
+        </div>
+    </section>
+
+    <!-- Emergency Actions -->
+    <section class="emergency-actions">
+        <div class="container">
+            <div class="actions-grid">
+                <div class="action-card emergency">
+                    <div class="action-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Emergency Alert</h3>
+                    <p>Immediately notify all your emergency contacts with your live location</p>
+                    <button class="btn btn-emergency" onclick="activateEmergency()">
+                        <i class="fas fa-bell"></i> Activate Emergency
+                    </button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Call Emergency Services</h3>
+                    <p>Direct connection to local emergency services</p>
+                    <button class="btn btn-primary" onclick="callEmergencyServices()">
+                        <i class="fas fa-phone"></i> Call 112
+                    </button>
+                </div>
+
+                <div class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Share Live Location</h3>
+                    <p>Share your real-time location with trusted contacts</p>
+                    <button class="btn btn-primary" onclick="shareLocation()">
+                        <i class="fas fa-share-alt"></i> Share Location
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts -->
+    <section class="emergency-contacts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Emergency Contacts</h2>
+                <p>Your trusted contacts who will be notified in case of emergency</p>
+            </div>
+            <div class="contacts-grid" id="emergencyContacts">
+                <!-- Contacts will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Quick Actions</h2>
+                <p>Fast access to essential safety features</p>
+            </div>
+            <div class="quick-buttons">
+                <a th:href="@{/location}" class="quick-btn">
+                    <i class="fas fa-location-arrow"></i>
+                    <h4>Live Location</h4>
+                </a>
+                <a th:href="@{/contacts}" class="quick-btn">
+                    <i class="fas fa-users"></i>
+                    <h4>Manage Contacts</h4>
+                </a>
+                <a th:href="@{/safe-places}" class="quick-btn">
+                    <i class="fas fa-home"></i>
+                    <h4>Safe Places</h4>
+                </a>
+                <a th:href="@{/dashboard}" class="quick-btn">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Dashboard</h4>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="quick-access">
+                <a th:href="@{/dashboard}" class="btn-outline">Go to Dashboard</a>
+                <a th:href="@{/}" class="btn-outline">Back to Home</a>
+                <a th:href="@{/login}" class="btn-outline">Login</a>
+            </div>
+            <p>&copy; 2024 Guardian Eye. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Emergency Modal -->
+    <div id="emergencyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEmergencyModal()">&times;</span>
+            <div class="action-icon" style="background: #e74c3c; margin: 0 auto 20px;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2>Emergency Alert Activated!</h2>
+            <p>Your emergency contacts have been notified with your current location.</p>
+            <p><strong>Help is on the way!</strong></p>
+            <div style="margin-top: 30px;">
+                <button class="btn btn-emergency" onclick="closeEmergencyModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+                const icon = menuToggle.querySelector('i');
+                
+                navMenu.classList.remove('active');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Emergency Functions
+        async function activateEmergency() {
+            if (confirm('Are you sure you want to activate emergency alert? This will notify all your emergency contacts with your location.')) {
+                try {
+                    // Get current location
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            async (position) => {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                                
+                                const emergencyData = {
+                                    latitude: lat,
+                                    longitude: lng,
+                                    timestamp: new Date().toISOString(),
+                                    message: 'EMERGENCY! I need immediate help!'
+                                };
+                                
+                                // Simulate API call
+                                console.log('Sending emergency alert:', emergencyData);
+                                
+                                // Show success modal
+                                document.getElementById('emergencyModal').style.display = 'block';
+                                
+                                // Simulate sending to contacts
+                                simulateEmergencyNotification();
+                                
+                            },
+                            (error) => {
+                                // Location unavailable, still send alert
+                                document.getElementById('emergencyModal').style.display = 'block';
+                                simulateEmergencyNotification();
+                            }
+                        );
+                    } else {
+                        // Geolocation not supported
+                        document.getElementById('emergencyModal').style.display = 'block';
+                        simulateEmergencyNotification();
+                    }
+                } catch (error) {
+                    console.error('Error activating emergency:', error);
+                    alert('Error activating emergency alert. Please try again.');
+                }
+            }
+        }
+
+        function simulateEmergencyNotification() {
+            // Simulate notification process
+            console.log('Notifying emergency contacts...');
+            
+            // You would typically make API calls here to notify contacts
+            setTimeout(() => {
+                console.log('All contacts notified successfully');
+            }, 2000);
+        }
+
+        function callEmergencyServices() {
+            if (confirm('Call emergency services (112)?')) {
+                window.location.href = 'tel:112';
+            }
+        }
+
+        async function shareLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        alert(`Location shared! Coordinates: ${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+                    },
+                    (error) => {
+                        alert('Unable to get your location. Please check location permissions.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        function closeEmergencyModal() {
+            document.getElementById('emergencyModal').style.display = 'none';
+        }
+
+        // Load emergency contacts
+        function loadEmergencyContacts() {
+            const contactsContainer = document.getElementById('emergencyContacts');
+            
+            // Sample data - in real app, this would come from API
+            const sampleContacts = [
+                { name: 'Priya Sharma', phone: '+91-9876543210', relation: 'Family' },
+                { name: 'Emergency Services', phone: '112', relation: 'Emergency' },
+                { name: 'Local Police', phone: '100', relation: 'Police' },
+                { name: 'Ambulance', phone: '108', relation: 'Medical' }
+            ];
+            
+            contactsContainer.innerHTML = '';
+            
+            sampleContacts.forEach(contact => {
+                const contactCard = document.createElement('div');
+                contactCard.className = 'contact-card';
+                contactCard.innerHTML = `
+                    <h4>${contact.name}</h4>
+                    <p>${contact.relation}</p>
+                    <a href="tel:${contact.phone}" class="phone">${contact.phone}</a>
+                `;
+                contactsContainer.appendChild(contactCard);
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEmergencyContacts();
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('emergencyModal');
+            if (event.target === modal) {
+                closeEmergencyModal();
+            }
+        }
+    </script>
+</body>
+</html>

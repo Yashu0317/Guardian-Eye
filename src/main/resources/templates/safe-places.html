@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Places - Guardian Eye</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-logo i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-signup:hover {
+            background-color: #c0392b;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Safe Places Header */
+        .safe-places-header {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .safe-places-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .safe-places-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Safe Places Overview */
+        .safe-places-overview {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .overview-card {
+            background: #f8f9fa;
+            padding: 30px 25px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #2ecc71;
+        }
+
+        .overview-card i {
+            font-size: 2.5rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .overview-card h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .overview-card p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        /* Safe Places Map */
+        .safe-places-map {
+            padding: 40px 0;
+        }
+
+        .map-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 400px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-overlay {
+            position: relative;
+            z-index: 1;
+            background: rgba(0,0,0,0.5);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .map-overlay i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .map-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Safe Places List */
+        .safe-places-list {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .place-card {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #2ecc71;
+        }
+
+        .place-type {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .type-police {
+            background: #3498db;
+            color: white;
+        }
+
+        .type-hospital {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .type-safehouse {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .type-public {
+            background: #f39c12;
+            color: white;
+        }
+
+        .place-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #2ecc71;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .place-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        .place-info {
+            margin-bottom: 20px;
+        }
+
+        .place-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .place-detail i {
+            width: 20px;
+            margin-right: 12px;
+            color: #2ecc71;
+            margin-top: 2px;
+        }
+
+        .place-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        /* Add Safe Place */
+        .add-safe-place {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+
+        .add-place-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        /* Safety Features */
+        .safety-features {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #2ecc71;
+        }
+
+        .feature-item h3 {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .feature-item p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 60px 0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #2ecc71;
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .action-btn h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link, .btn-signup {
+                width: 100%;
+                text-align: center;
+                margin: 2px 0;
+            }
+
+            .safe-places-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .safe-places-header p {
+                font-size: 1.1rem;
+            }
+            
+            .overview-cards {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .places-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .add-safe-place {
+                padding: 30px 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .place-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .safe-places-header {
+                padding: 40px 0;
+            }
+            
+            .safe-places-overview, .safe-places-list, .quick-actions {
+                padding: 40px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .map-container {
+                height: 300px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-access {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-outline {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Guardian Eye</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <a th:href="@{/}" class="nav-link">Home</a>
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                    <a th:href="@{/emergency}" class="nav-link">Emergency</a>
+                    <a th:href="@{/location}" class="nav-link">Location</a>
+                    <a th:href="@{/contacts}" class="nav-link">Contacts</a>
+                    <a th:href="@{/safe-places}" class="nav-link active">Safe Places</a>
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                    <a th:href="@{/signup}" class="btn-signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Safe Places Header -->
+    <section class="safe-places-header">
+        <div class="container">
+            <h1>Safe Places Network</h1>
+            <p>Mark and navigate to trusted safe locations in your area</p>
+        </div>
+    </section>
+
+    <!-- Safe Places Overview -->
+    <section class="safe-places-overview">
+        <div class="container">
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3 id="totalPlaces">8</h3>
+                    <p>Safe Places</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3 id="nearbyPlaces">3</h3>
+                    <p>Nearby Now</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-clock"></i>
+                    <h3 id="recentlyAdded">2</h3>
+                    <p>Recently Added</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-star"></i>
+                    <h3 id="verifiedPlaces">6</h3>
+                    <p>Verified Places</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safe Places Map -->
+    <section class="safe-places-map">
+        <div class="container">
+            <div class="map-container">
+                <div class="map-overlay">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Safe Places Map</h3>
+                    <p>View all safe locations in your area</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-success" onclick="showSafePlacesMap()">
+                            <i class="fas fa-map"></i> View Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safe Places List -->
+    <section class="safe-places-list">
+        <div class="container">
+            <div class="section-title">
+                <h2>Your Safe Places</h2>
+                <p>Trusted locations for emergency situations</p>
+            </div>
+
+            <div class="places-grid" id="safePlacesGrid">
+                <!-- Safe places will be loaded here dynamically -->
+            </div>
+
+            <!-- Add Safe Place Section -->
+            <div class="add-safe-place">
+                <div class="section-title">
+                    <h2>Add New Safe Place</h2>
+                    <p>Mark a new safe location in your network</p>
+                </div>
+                <form class="add-place-form" id="addPlaceForm" onsubmit="addSafePlace(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="placeName">Place Name *</label>
+                            <input type="text" id="placeName" name="placeName" required placeholder="e.g., Local Police Station">
+                        </div>
+                        <div class="form-group">
+                            <label for="placeType">Place Type *</label>
+                            <select id="placeType" name="placeType" required>
+                                <option value="">Select Type</option>
+                                <option value="police">Police Station</option>
+                                <option value="hospital">Hospital</option>
+                                <option value="safehouse">Safe House</option>
+                                <option value="public">Public Place</option>
+                                <option value="friend">Friend's House</option>
+                                <option value="family">Family Home</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="placeAddress">Address *</label>
+                        <textarea id="placeAddress" name="placeAddress" required placeholder="Full address of the safe place"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="placePhone">Phone Number</label>
+                            <input type="tel" id="placePhone" name="placePhone" placeholder="+91-1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label for="placeDistance">Distance from Home</label>
+                            <input type="text" id="placeDistance" name="placeDistance" placeholder="e.g., 2.5 km">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="placeNotes">Additional Notes</label>
+                        <textarea id="placeNotes" name="placeNotes" placeholder="Any additional information about this safe place"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus-circle"></i> Add Safe Place
+                        </button>
+                        <button type="reset" class="btn btn-warning">
+                            <i class="fas fa-redo"></i> Clear Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Features -->
+    <section class="safety-features">
+        <div class="container">
+            <div class="section-title" style="color: white;">
+                <h2>Safe Place Features</h2>
+                <p>Advanced safety features for your protection</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-map-pin"></i>
+                    <h3>Quick Navigation</h3>
+                    <p>One-tap navigation to the nearest safe place with real-time directions</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-bell"></i>
+                    <h3>Auto-Alerts</h3>
+                    <p>Automatic alerts when you're near a safe place or need to find one</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <h3>Shared Network</h3>
+                    <p>Share safe places with family members and trusted contacts</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-verified"></i>
+                    <h3>Verified Places</h3>
+                    <p>Community-verified safe places with ratings and reviews</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Quick Actions</h2>
+            <div class="action-buttons">
+                <a th:href="@{/emergency}" class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <h4>Emergency Alert</h4>
+                </a>
+                <a th:href="@{/location}" class="action-btn">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Location Sharing</h4>
+                </a>
+                <a th:href="@{/contacts}" class="action-btn">
+                    <i class="fas fa-users"></i>
+                    <h4>Manage Contacts</h4>
+                </a>
+                <a th:href="@{/dashboard}" class="action-btn">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Dashboard</h4>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="quick-access">
+                <a th:href="@{/dashboard}" class="btn-outline">Go to Dashboard</a>
+                <a th:href="@{/}" class="btn-outline">Back to Home</a>
+                <a th:href="@{/login}" class="btn-outline">Login</a>
+            </div>
+            <p>&copy; 2024 Guardian Eye. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+                const icon = menuToggle.querySelector('i');
+                
+                navMenu.classList.remove('active');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Safe places management
+        let safePlaces = JSON.parse(localStorage.getItem('guardianEyeSafePlaces')) || [];
+
+        // Sample safe places for demo
+        const sampleSafePlaces = [
+            {
+                id: '1',
+                name: 'Local Police Station',
+                type: 'police',
+                address: '123 Safety Street, Civil Lines, Delhi 110054',
+                phone: '+91-11-12345678',
+                distance: '1.2 km',
+                notes: '24/7 police station with emergency response',
+                icon: 'fas fa-shield-alt'
+            },
+            {
+                id: '2',
+                name: 'City General Hospital',
+                type: 'hospital',
+                address: '456 Health Avenue, Medical Complex, Delhi 110024',
+                phone: '+91-11-23456789',
+                distance: '2.8 km',
+                notes: '24/7 emergency medical services',
+                icon: 'fas fa-hospital'
+            },
+            {
+                id: '3',
+                name: 'Community Safe House',
+                type: 'safehouse',
+                address: '789 Community Center, Safe Zone, Delhi 110017',
+                phone: '+91-11-34567890',
+                distance: '0.8 km',
+                notes: 'Women and children safe house',
+                icon: 'fas fa-home'
+            },
+            {
+                id: '4',
+                name: 'Central Metro Station',
+                type: 'public',
+                address: 'Central Metro, Connaught Place, Delhi 110001',
+                phone: '+91-11-45678901',
+                distance: '3.5 km',
+                notes: 'Crowded public place with security',
+                icon: 'fas fa-subway'
+            }
+        ];
+
+        function initializeSafePlaces() {
+            if (safePlaces.length === 0) {
+                safePlaces = sampleSafePlaces;
+                saveSafePlaces();
+            }
+            updateOverview();
+            renderSafePlaces();
+        }
+
+        function addSafePlace(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const type = formData.get('placeType');
+            const icon = getIconForType(type);
+            
+            const place = {
+                id: Date.now().toString(),
+                name: formData.get('placeName'),
+                type: type,
+                address: formData.get('placeAddress'),
+                phone: formData.get('placePhone'),
+                distance: formData.get('placeDistance'),
+                notes: formData.get('placeNotes'),
+                icon: icon
+            };
+            
+            safePlaces.push(place);
+            saveSafePlaces();
+            renderSafePlaces();
+            updateOverview();
+            form.reset();
+            
+            alert('Safe place added successfully!');
+        }
+
+        function removeSafePlace(id) {
+            if (confirm('Are you sure you want to remove this safe place?')) {
+                safePlaces = safePlaces.filter(place => place.id !== id);
+                saveSafePlaces();
+                renderSafePlaces();
+                updateOverview();
+                alert('Safe place removed successfully.');
+            }
+        }
+
+        function navigateToPlace(id) {
+            const place = safePlaces.find(p => p.id === id);
+            if (place) {
+                alert(`Navigating to ${place.name}\nAddress: ${place.address}\n\nThis would open your navigation app in a real application.`);
+            }
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                police: 'fas fa-shield-alt',
+                hospital: 'fas fa-hospital',
+                safehouse: 'fas fa-home',
+                public: 'fas fa-building',
+                friend: 'fas fa-user-friends',
+                family: 'fas fa-heart'
+            };
+            return icons[type] || 'fas fa-map-marker-alt';
+        }
+
+        function getTypeClass(type) {
+            return `type-${type}`;
+        }
+
+        function saveSafePlaces() {
+            localStorage.setItem('guardianEyeSafePlaces', JSON.stringify(safePlaces));
+        }
+
+        function renderSafePlaces() {
+            const grid = document.getElementById('safePlacesGrid');
+            grid.innerHTML = '';
+            
+            safePlaces.forEach(place => {
+                const card = document.createElement('div');
+                card.className = 'place-card';
+                
+                card.innerHTML = `
+                    <div class="place-type ${getTypeClass(place.type)}">${place.type}</div>
+                    <div class="place-icon">
+                        <i class="${place.icon}"></i>
+                    </div>
+                    <h3>${place.name}</h3>
+                    <div class="place-info">
+                        <div class="place-detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${place.address}</span>
+                        </div>
+                        ${place.phone ? `
+                        <div class="place-detail">
+                            <i class="fas fa-phone"></i>
+                            <span>${place.phone}</span>
+                        </div>
+                        ` : ''}
+                        ${place.distance ? `
+                        <div class="place-detail">
+                            <i class="fas fa-road"></i>
+                            <span>${place.distance} away</span>
+                        </div>
+                        ` : ''}
+                        ${place.notes ? `
+                        <div class="place-detail">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>${place.notes}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="place-actions">
+                        <button class="btn btn-primary" onclick="navigateToPlace('${place.id}')">
+                            <i class="fas fa-directions"></i> Navigate
+                        </button>
+                        <button class="btn btn-success" onclick="sharePlace('${place.id}')">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                        <button class="btn btn-warning" onclick="removeSafePlace('${place.id}')">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function updateOverview() {
+            document.getElementById('totalPlaces').textContent = safePlaces.length;
+            document.getElementById('nearbyPlaces').textContent = safePlaces.filter(p => parseFloat(p.distance) < 5).length;
+            document.getElementById('recentlyAdded').textContent = '2';
+            document.getElementById('verifiedPlaces').textContent = safePlaces.length;
+        }
+
+        function showSafePlacesMap() {
+            alert('This would show an interactive map with all your safe places marked in a real application.');
+        }
+
+        function sharePlace(id) {
+            const place = safePlaces.find(p => p.id === id);
+            if (place) {
+                alert(`Sharing safe place: ${place.name}\n\nThis would allow you to share this safe place with your emergency contacts in a real application.`);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSafePlaces();
+        });
+    </script>
+</body>
+</html>

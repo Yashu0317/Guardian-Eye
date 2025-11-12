@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Dashboard - Guardian Eye</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-logo i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-signup:hover {
+            background-color: #c0392b;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Dashboard Content */
+        .dashboard-container {
+            padding: 40px 0;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        /* Stats Section */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+        }
+
+        .stat-icon.emergency {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+
+        .stat-icon.location {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .stat-icon.contacts {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+
+        .stat-card h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+
+        .stat-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .btn-emergency {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .btn-emergency:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        /* Features Section */
+        .dashboard-features {
+            margin-bottom: 50px;
+        }
+
+        .dashboard-features h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-item {
+            background: white;
+            border-radius: 10px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .feature-item h4 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+
+        .feature-item p {
+            color: #7f8c8d;
+        }
+
+        /* Family Members Section */
+        .family-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .family-section h2 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .family-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .family-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #3498db;
+            transition: transform 0.3s;
+        }
+
+        .family-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .family-card.emergency {
+            border-left-color: #e74c3c;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffecec 100%);
+        }
+
+        .family-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .family-info h3 {
+            margin: 0 0 5px 0;
+            color: #2d3748;
+        }
+
+        .family-relationship {
+            color: #3498db;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .emergency-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .family-contact {
+            margin: 15px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            color: #4a5568;
+        }
+
+        .family-status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            text-align: center;
+        }
+
+        .status-safe {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        .status-emergency {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+            border: 1px solid #c0392b;
+        }
+
+        .status-unknown {
+            background-color: rgba(149, 165, 166, 0.1);
+            color: #7f8c8d;
+            border: 1px solid #7f8c8d;
+        }
+
+        /* CRUD Operations Section */
+        .crud-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .crud-section h2 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .crud-section h3 {
+            margin: 30px 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.4rem;
+        }
+
+        .crud-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .crud-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .crud-form h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background-color: #34495e;
+            color: white;
+        }
+
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* Quick Access Footer */
+        .quick-access {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .quick-access h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .quick-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: #2c3e50;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .dashboard-stats,
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .crud-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link, .btn-signup {
+                width: 100%;
+                text-align: center;
+                margin: 2px 0;
+            }
+
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-header p {
+                font-size: 1rem;
+            }
+            
+            .stat-card,
+            .feature-item {
+                padding: 20px 15px;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.2rem;
+            }
+            
+            .feature-item h4 {
+                font-size: 1.1rem;
+            }
+            
+            .quick-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .quick-buttons a {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .dashboard-stats,
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .family-section,
+            .crud-section {
+                padding: 20px 15px;
+            }
+            
+            .family-section h2,
+            .crud-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .crud-section h3 {
+                font-size: 1.2rem;
+            }
+            
+            .data-table {
+                font-size: 0.8rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 8px 6px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+                margin: 2px 0;
+            }
+            
+            .form-actions {
+                justify-content: center;
+            }
+            
+            .form-actions button {
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .quick-access h3 {
+                font-size: 1.5rem;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .nav-logo {
+                font-size: 1.2rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .stat-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .feature-item i {
+                font-size: 2rem;
+            }
+            
+            .btn-emergency,
+            .btn-primary {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Table responsive for mobile */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Ensure buttons are touch-friendly on mobile */
+        button, .btn-primary, .btn-secondary, .btn-outline {
+            min-height: 44px;
+        }
+
+        /* Improve form elements for mobile */
+        input, select, textarea {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Guardian Eye</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <a th:href="@{/}" class="nav-link">Home</a>
+                    <a th:href="@{/family-dashboard}" class="nav-link active">Family Dashboard</a>
+                    <a th:href="@{/family}" class="nav-link">Family Members</a>
+                    <a th:href="@{/emergency}" class="nav-link">Emergency</a>
+                    <a th:href="@{/location}" class="nav-link">Location</a>
+                  <!--  <a th:href="@{/login}" class="nav-link">Login</a>-->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Family Safety Dashboard</h1>
+                <p>Monitor and manage your family's safety network</p>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon emergency">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Active Alerts</h3>
+                    <p id="activeAlertsCount">0 active alerts</p>
+                    <button class="btn-emergency" onclick="viewAllAlerts()">View All Alerts</button>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon location">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Family Locations</h3>
+                    <p id="familyLocationsCount">Tracking 0 members</p>
+                    <button class="btn-primary" onclick="viewFamilyLocations()">View Locations</button>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon contacts">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>Family Network</h3>
+                    <p id="familyMembersCount">0 family members</p>
+                    <button class="btn-primary" onclick="manageFamilyMembers()">Manage Family</button>
+                </div>
+            </div>
+
+            <!-- Family Members Section -->
+            <div class="family-section">
+                <h2>Your Family Network</h2>
+                <div class="family-grid" id="familyGrid">
+                    <!-- Family members will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="dashboard-features">
+                <h2>Family Safety Features</h2>
+                <div class="features-grid">
+                    <a href="/family-emergency" class="feature-item">
+                        <i class="fas fa-bell"></i>
+                        <h4>Emergency Alerts</h4>
+                        <p>View and respond to family emergency alerts</p>
+                    </a>
+                    <a href="/family-location" class="feature-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h4>Family Locations</h4>
+                        <p>Track family member locations in real-time</p>
+                    </a>
+                    <a href="/family" class="feature-item">
+                        <i class="fas fa-user-friends"></i>
+                        <h4>Family Management</h4>
+                        <p>Add and manage family members</p>
+                    </a>
+                    <a href="/family-quick-dial" class="feature-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <h4>Quick Contact</h4>
+                        <p>Quickly contact family members</p>
+                    </a>
+                    <a href="/family-safe-places" class="feature-item">
+                        <i class="fas fa-home"></i>
+                        <h4>Family Safe Places</h4>
+                        <p>View family-designated safe locations</p>
+                    </a>
+                    <a href="/family-alerts" class="feature-item">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Alert History</h4>
+                        <p>Review past safety alerts and incidents</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CRUD Operations Section -->
+            <div class="crud-section">
+                <h2>Manage Your Family Safety Data</h2>
+                
+                <div class="crud-actions">
+                    <div class="crud-form">
+                        <h3>Add Family Member</h3>
+                        <form id="familyMemberForm" onsubmit="addFamilyMember(event)">
+                            <div class="form-group">
+                                <label for="familyMemberName">Name:</label>
+                                <input type="text" id="familyMemberName" name="familyMemberName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="familyMemberPhone">Phone:</label>
+                                <input type="tel" id="familyMemberPhone" name="familyMemberPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="familyMemberRelation">Relation:</label>
+                                <select id="familyMemberRelation" name="familyMemberRelation" required>
+                                    <option value="">Select Relation</option>
+                                    <option value="parent">Parent</option>
+                                    <option value="spouse">Spouse</option>
+                                    <option value="child">Child</option>
+                                    <option value="sibling">Sibling</option>
+                                    <option value="grandparent">Grandparent</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-success">Add Member</button>
+                                <button type="reset" class="btn-warning">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="crud-form">
+                        <h3>Add Family Safe Place</h3>
+                        <form id="familySafePlaceForm" onsubmit="addFamilySafePlace(event)">
+                            <div class="form-group">
+                                <label for="familyPlaceName">Place Name:</label>
+                                <input type="text" id="familyPlaceName" name="familyPlaceName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="familyPlaceAddress">Address:</label>
+                                <textarea id="familyPlaceAddress" name="familyPlaceAddress" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="familyPlaceType">Type:</label>
+                                <select id="familyPlaceType" name="familyPlaceType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="home">Home</option>
+                                    <option value="work">Work</option>
+                                    <option value="school">School</option>
+                                    <option value="relative">Relative's Home</option>
+                                    <option value="public">Public Safe Place</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-success">Add Safe Place</button>
+                                <button type="reset" class="btn-warning">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Family Members Table -->
+                <h3>Family Members</h3>
+                <div id="familyMembersLoading" class="spinner" style="display: none;"></div>
+                <div class="table-responsive">
+                    <table class="data-table" id="familyMembersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Relation</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="familyMembersTableBody">
+                            <!-- Family members will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Family Safe Places Table -->
+                <h3>Family Safe Places</h3>
+                <div id="familySafePlacesLoading" class="spinner" style="display: none;"></div>
+                <div class="table-responsive">
+                    <table class="data-table" id="familySafePlacesTable">
+                        <thead>
+                            <tr>
+                                <th>Place Name</th>
+                                <th>Address</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="familySafePlacesTableBody">
+                            <!-- Safe places will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Locations Modal -->
+    <div id="familyLocationsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeFamilyLocationsModal()">&times;</span>
+            <h2>Family Member Locations</h2>
+            <div id="familyLocationsList">
+                <!-- Family locations will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts Modal -->
+    <div id="alertsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAlertsModal()">&times;</span>
+            <h2>Family Safety Alerts</h2>
+            <div id="alertsList">
+                <!-- Alerts will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Footer -->
+    <div class="quick-access">
+        <div class="container">
+            <h3>Quick Access</h3>
+            <div class="quick-buttons">
+                <a th:href="@{/family-emergency}" class="btn-primary">Family Emergency</a>
+                <a th:href="@{/family-location}" class="btn-secondary">Family Locations</a>
+                <a th:href="@{/family}" class="btn-outline">Manage Family</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+                const icon = menuToggle.querySelector('i');
+                
+                navMenu.classList.remove('active');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Family Member CRUD Operations
+        async function addFamilyMember(event) {
+            event.preventDefault();
+            const name = document.getElementById('familyMemberName').value;
+            const phone = document.getElementById('familyMemberPhone').value;
+            const relation = document.getElementById('familyMemberRelation').value;
+            
+            const familyMemberData = { name, phone, relation };
+            
+            try {
+                const response = await fetch('/family-dashboard/members', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(familyMemberData)
+                });
+                
+                if (response.ok) {
+                    alert('Family member added successfully!');
+                    document.getElementById('familyMemberForm').reset();
+                    await loadFamilyMembers();
+                } else {
+                    alert('Error adding family member');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding family member');
+            }
+        }
+
+        async function loadFamilyMembers() {
+            try {
+                document.getElementById('familyMembersLoading').style.display = 'block';
+                const response = await fetch('/family-dashboard/members');
+                const familyMembers = await response.json();
+                updateFamilyMembersTable(familyMembers);
+                updateFamilyGrid(familyMembers);
+                document.getElementById('familyMembersCount').textContent = `${familyMembers.length} family members`;
+                document.getElementById('familyMembersLoading').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading family members:', error);
+                document.getElementById('familyMembersLoading').style.display = 'none';
+                updateFamilyMembersTableWithSampleData();
+            }
+        }
+
+        async function deleteFamilyMember(id) {
+            if (confirm('Are you sure you want to remove this family member?')) {
+                try {
+                    const response = await fetch(`/family-dashboard/members/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Family member removed successfully!');
+                        await loadFamilyMembers();
+                    } else {
+                        alert('Error removing family member');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error removing family member');
+                }
+            }
+        }
+
+        function updateFamilyMembersTable(familyMembers) {
+            const tableBody = document.getElementById('familyMembersTableBody');
+            tableBody.innerHTML = '';
+            
+            if (familyMembers.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No family members found</td></tr>';
+                return;
+            }
+            
+            familyMembers.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.phone}</td>
+                    <td>${member.relation}</td>
+                    <td><span class="family-status ${getStatusClass(member.status)}">${member.status || 'Unknown'}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn-warning" onclick="editFamilyMember(${member.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteFamilyMember(${member.id})">Remove</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateFamilyGrid(familyMembers) {
+            const familyGrid = document.getElementById('familyGrid');
+            familyGrid.innerHTML = '';
+            
+            if (familyMembers.length === 0) {
+                familyGrid.innerHTML = '<div class="empty-state"><i class="fas fa-user-friends"></i><p>No family members added yet</p></div>';
+                return;
+            }
+            
+            familyMembers.forEach(member => {
+                const card = document.createElement('div');
+                card.className = `family-card ${member.hasEmergency ? 'emergency' : ''}`;
+                card.innerHTML = `
+                    <div class="family-header">
+                        <div class="family-info">
+                            <h3>${member.name}</h3>
+                            <div class="family-relationship">${member.relation}</div>
+                        </div>
+                        ${member.hasEmergency ? '<div class="emergency-badge">EMERGENCY</div>' : ''}
+                    </div>
+                    <div class="family-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>${member.phone}</span>
+                        </div>
+                        ${member.email ? `<div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>${member.email}</span>
+                        </div>` : ''}
+                    </div>
+                    <div class="family-status ${getStatusClass(member.status)}">
+                        ${member.status || 'Status unknown'}
+                    </div>
+                `;
+                familyGrid.appendChild(card);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case 'safe': return 'status-safe';
+                case 'emergency': return 'status-emergency';
+                default: return 'status-unknown';
+            }
+        }
+
+        // Family Safe Places CRUD Operations
+        async function addFamilySafePlace(event) {
+            event.preventDefault();
+            const name = document.getElementById('familyPlaceName').value;
+            const address = document.getElementById('familyPlaceAddress').value;
+            const type = document.getElementById('familyPlaceType').value;
+            
+            const safePlaceData = { name, address, type };
+            
+            try {
+                const response = await fetch('/family-dashboard/safe-places', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(safePlaceData)
+                });
+                
+                if (response.ok) {
+                    alert('Family safe place added successfully!');
+                    document.getElementById('familySafePlaceForm').reset();
+                    await loadFamilySafePlaces();
+                } else {
+                    alert('Error adding family safe place');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding family safe place');
+            }
+        }
+
+        async function loadFamilySafePlaces() {
+            try {
+                document.getElementById('familySafePlacesLoading').style.display = 'block';
+                const response = await fetch('/family-dashboard/safe-places');
+                const safePlaces = await response.json();
+                updateFamilySafePlacesTable(safePlaces);
+                document.getElementById('familySafePlacesLoading').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading family safe places:', error);
+                document.getElementById('familySafePlacesLoading').style.display = 'none';
+                updateFamilySafePlacesTableWithSampleData();
+            }
+        }
+
+        async function deleteFamilySafePlace(id) {
+            if (confirm('Are you sure you want to delete this family safe place?')) {
+                try {
+                    const response = await fetch(`/family-dashboard/safe-places/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Family safe place deleted successfully!');
+                        await loadFamilySafePlaces();
+                    } else {
+                        alert('Error deleting family safe place');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error deleting family safe place');
+                }
+            }
+        }
+
+        function updateFamilySafePlacesTable(safePlaces) {
+            const tableBody = document.getElementById('familySafePlacesTableBody');
+            tableBody.innerHTML = '';
+            
+            if (safePlaces.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No family safe places found</td></tr>';
+                return;
+            }
+            
+            safePlaces.forEach(place => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${place.name}</td>
+                    <td>${place.address}</td>
+                    <td>${place.type}</td>
+                    <td class="action-buttons">
+                        <button class="btn-warning" onclick="editFamilySafePlace(${place.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteFamilySafePlace(${place.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Load alerts and update counts
+        async function loadAlerts() {
+            try {
+                const response = await fetch('/family-dashboard/alerts');
+                const alerts = await response.json();
+                const activeAlerts = alerts.filter(alert => alert.active);
+                document.getElementById('activeAlertsCount').textContent = `${activeAlerts.length} active alerts`;
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                document.getElementById('activeAlertsCount').textContent = 'Error loading alerts';
+            }
+        }
+
+        // Modal Functions
+        async function viewFamilyLocations() {
+            const modal = document.getElementById('familyLocationsModal');
+            const locationsList = document.getElementById('familyLocationsList');
+            
+            try {
+                const response = await fetch('/family-dashboard/locations');
+                const locations = await response.json();
+                
+                locationsList.innerHTML = '';
+                if (locations.length === 0) {
+                    locationsList.innerHTML = '<p>No location data available</p>';
+                } else {
+                    locations.forEach(location => {
+                        const locationDiv = document.createElement('div');
+                        locationDiv.className = 'location-item';
+                        locationDiv.innerHTML = `
+                            <h4>${location.name}</h4>
+                            <p>Last updated: ${new Date(location.timestamp).toLocaleString()}</p>
+                            <p>Location: ${location.address || 'Unknown'}</p>
+                            <hr>
+                        `;
+                        locationsList.appendChild(locationDiv);
+                    });
+                }
+                
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading family locations:', error);
+                locationsList.innerHTML = '<p>Error loading family locations</p>';
+                modal.style.display = 'block';
+            }
+        }
+
+        async function viewAllAlerts() {
+            const modal = document.getElementById('alertsModal');
+            const alertsList = document.getElementById('alertsList');
+            
+            try {
+                const response = await fetch('/family-dashboard/alerts');
+                const alerts = await response.json();
+                
+                alertsList.innerHTML = '';
+                if (alerts.length === 0) {
+                    alertsList.innerHTML = '<p>No alerts found</p>';
+                } else {
+                    alerts.forEach(alert => {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = `alert-item ${alert.active ? 'active-alert' : ''}`;
+                        alertDiv.innerHTML = `
+                            <h4>${alert.title} ${alert.active ? '<span class="emergency-badge">ACTIVE</span>' : ''}</h4>
+                            <p>From: ${alert.from}</p>
+                            <p>${alert.message}</p>
+                            <p>Time: ${new Date(alert.timestamp).toLocaleString()}</p>
+                            <hr>
+                        `;
+                        alertsList.appendChild(alertDiv);
+                    });
+                }
+                
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                alertsList.innerHTML = '<p>Error loading alerts</p>';
+                modal.style.display = 'block';
+            }
+        }
+
+        function closeFamilyLocationsModal() {
+            document.getElementById('familyLocationsModal').style.display = 'none';
+        }
+
+        function closeAlertsModal() {
+            document.getElementById('alertsModal').style.display = 'none';
+        }
+
+        // Navigation functions
+        function manageFamilyMembers() {
+            window.location.href = '/family';
+        }
+
+        // Edit Functions
+        function editFamilyMember(id) {
+            alert('Edit functionality for family member ID: ' + id + ' would be implemented here');
+        }
+
+        function editFamilySafePlace(id) {
+            alert('Edit functionality for family safe place ID: ' + id + ' would be implemented here');
+        }
+
+        // Fallback functions for when API is not available
+        function updateFamilyMembersTableWithSampleData() {
+            const sampleFamilyMembers = [
+                { id: 1, name: 'Priya Sharma', phone: '+91-9876543210', relation: 'spouse', status: 'safe' },
+                { id: 2, name: 'Rahul Sharma', phone: '+91-9876543211', relation: 'child', status: 'safe' },
+                { id: 3, name: 'Anita Sharma', phone: '+91-9876543212', relation: 'parent', status: 'emergency', hasEmergency: true }
+            ];
+            updateFamilyMembersTable(sampleFamilyMembers);
+            updateFamilyGrid(sampleFamilyMembers);
+            document.getElementById('familyMembersCount').textContent = `${sampleFamilyMembers.length} family members`;
+        }
+
+        function updateFamilySafePlacesTableWithSampleData() {
+            const sampleFamilySafePlaces = [
+                { id: 1, name: 'Family Home', address: '123 Safety Street, City', type: 'home' },
+                { id: 2, name: 'Grandma\'s House', address: '456 Family Lane, City', type: 'relative' }
+            ];
+            updateFamilySafePlacesTable(sampleFamilySafePlaces);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const locationsModal = document.getElementById('familyLocationsModal');
+            const alertsModal = document.getElementById('alertsModal');
+            
+            if (event.target === locationsModal) {
+                closeFamilyLocationsModal();
+            }
+            if (event.target === alertsModal) {
+                closeAlertsModal();
+            }
+        }
+
+        // Initialize Family Dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFamilyMembers();
+            loadFamilySafePlaces();
+            loadAlerts();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Dial - Guardian Eye</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-logo i {
+            margin-right: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-signup {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-signup:hover {
+            background-color: #c0392b;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Quick Dial Header */
+        .quick-dial-header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .quick-dial-header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .quick-dial-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Emergency Quick Dial */
+        .emergency-dial {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .emergency-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .emergency-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .emergency-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .emergency-btn:hover::before {
+            left: 100%;
+        }
+
+        .emergency-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.4);
+        }
+
+        .emergency-btn i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .emergency-btn h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .emergency-btn p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .emergency-btn .number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
+        }
+
+        /* Quick Contacts */
+        .quick-contacts {
+            padding: 60px 0;
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-left: 4px solid #3498db;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .contact-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #3498db;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .contact-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .contact-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .contact-number {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        /* Speed Dial */
+        .speed-dial {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .speed-dial-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .speed-dial-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px 15px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .speed-dial-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .speed-dial-btn i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .speed-dial-btn span {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Recent Calls */
+        .recent-calls {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .calls-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .call-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.3s;
+        }
+
+        .call-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .call-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .call-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+
+        .call-details h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .call-details p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .call-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 60px 0;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #e74c3c;
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .action-btn h4 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .quick-access {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+                gap: 10px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link, .btn-signup {
+                width: 100%;
+                text-align: center;
+                margin: 2px 0;
+            }
+
+            .quick-dial-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .quick-dial-header p {
+                font-size: 1.1rem;
+            }
+            
+            .emergency-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .contacts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .speed-dial-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .call-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .call-info {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .quick-dial-header {
+                padding: 40px 0;
+            }
+            
+            .emergency-dial, .quick-contacts, .recent-calls, .quick-actions {
+                padding: 40px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .emergency-btn {
+                padding: 30px 20px;
+            }
+            
+            .speed-dial-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-access {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Guardian Eye</span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="navMenu">
+                    <a th:href="@{/}" class="nav-link">Home</a>
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                    <a th:href="@{/emergency}" class="nav-link">Emergency</a>
+                    <a th:href="@{/location}" class="nav-link">Location</a>
+                    <a th:href="@{/contacts}" class="nav-link">Contacts</a>
+                    <a th:href="@{/quick-dial}" class="nav-link active">Quick Dial</a>
+                    <a th:href="@{/login}" class="nav-link">Login</a>
+                    <a th:href="@{/signup}" class="btn-signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Quick Dial Header -->
+    <section class="quick-dial-header">
+        <div class="container">
+            <h1>Quick Dial Emergency</h1>
+            <p>Instant access to emergency services and trusted contacts with one tap</p>
+        </div>
+    </section>
+
+    <!-- Emergency Quick Dial -->
+    <section class="emergency-dial">
+        <div class="container">
+            <div class="section-title">
+                <h2>Emergency Services</h2>
+                <p>One-tap calling to essential emergency numbers</p>
+            </div>
+
+            <div class="emergency-buttons">
+                <a href="tel:112" class="emergency-btn" onclick="logEmergencyCall('112', 'Emergency Helpline')">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Emergency Helpline</h3>
+                    <p>General emergency number</p>
+                    <span class="number">112</span>
+                </a>
+
+                <a href="tel:100" class="emergency-btn" onclick="logEmergencyCall('100', 'Police')">
+                    <i class="fas fa-police-box"></i>
+                    <h3>Police</h3>
+                    <p>Police emergency services</p>
+                    <span class="number">100</span>
+                </a>
+
+                <a href="tel:108" class="emergency-btn" onclick="logEmergencyCall('108', 'Ambulance')">
+                    <i class="fas fa-ambulance"></i>
+                    <h3>Ambulance</h3>
+                    <p>Medical emergency services</p>
+                    <span class="number">108</span>
+                </a>
+
+                <a href="tel:101" class="emergency-btn" onclick="logEmergencyCall('101', 'Fire Department')">
+                    <i class="fas fa-fire-extinguisher"></i>
+                    <h3>Fire Department</h3>
+                    <p>Fire emergency services</p>
+                    <span class="number">101</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Contacts -->
+    <section class="quick-contacts">
+        <div class="container">
+            <div class="section-title">
+                <h2>Quick Contacts</h2>
+                <p>Your most important contacts for fast access</p>
+            </div>
+
+            <div class="contacts-grid" id="quickContactsGrid">
+                <!-- Quick contacts will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Speed Dial -->
+    <section class="speed-dial">
+        <div class="container">
+            <div class="section-title" style="color: white;">
+                <h2>Speed Dial</h2>
+                <p>Quick access to frequently called contacts</p>
+            </div>
+
+            <div class="speed-dial-buttons">
+                <a href="tel:+91-9876543210" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543210', 'Priya Sharma')">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Spouse</span>
+                </a>
+                <a href="tel:+91-9876543211" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543211', 'Rahul Sharma')">
+                    <i class="fas fa-child"></i>
+                    <span>Child</span>
+                </a>
+                <a href="tel:+91-9876543212" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543212', 'Anita Sharma')">
+                    <i class="fas fa-user"></i>
+                    <span>Parent</span>
+                </a>
+                <a href="tel:+91-9876543213" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543213', 'Neighbor')">
+                    <i class="fas fa-home"></i>
+                    <span>Neighbor</span>
+                </a>
+                <a href="tel:+91-9876543214" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543214', 'Doctor')">
+                    <i class="fas fa-user-md"></i>
+                    <span>Doctor</span>
+                </a>
+                <a href="tel:+91-9876543215" class="speed-dial-btn" onclick="logEmergencyCall('+91-9876543215', 'Friend')">
+                    <i class="fas fa-users"></i>
+                    <span>Friend</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Calls -->
+    <section class="recent-calls">
+        <div class="container">
+            <div class="section-title">
+                <h2>Recent Emergency Calls</h2>
+                <p>Your recent emergency service calls</p>
+            </div>
+
+            <div class="calls-list" id="recentCallsList">
+                <!-- Recent calls will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Quick Actions</h2>
+            <div class="action-buttons">
+                <a th:href="@{/emergency}" class="action-btn">
+                    <i class="fas fa-bell"></i>
+                    <h4>Emergency Alert</h4>
+                </a>
+                <a th:href="@{/location}" class="action-btn">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>Location Sharing</h4>
+                </a>
+                <a th:href="@{/contacts}" class="action-btn">
+                    <i class="fas fa-users"></i>
+                    <h4>Manage Contacts</h4>
+                </a>
+                <a th:href="@{/dashboard}" class="action-btn">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h4>Dashboard</h4>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="quick-access">
+                <a th:href="@{/dashboard}" class="btn-outline">Go to Dashboard</a>
+                <a th:href="@{/}" class="btn-outline">Back to Home</a>
+                <a th:href="@{/login}" class="btn-outline">Login</a>
+            </div>
+            <p>&copy; 2024 Guardian Eye. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle functionality
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+            
+            const icon = this.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                const menuToggle = document.getElementById('menuToggle');
+                const icon = menuToggle.querySelector('i');
+                
+                navMenu.classList.remove('active');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+
+        // Quick contacts data
+        const quickContacts = [
+            {
+                name: 'Priya Sharma',
+                relation: 'Spouse',
+                phone: '+91-9876543210',
+                type: 'family',
+                icon: 'fas fa-heart'
+            },
+            {
+                name: 'Local Police Station',
+                relation: 'Police',
+                phone: '+91-11-12345678',
+                type: 'emergency',
+                icon: 'fas fa-shield-alt'
+            },
+            {
+                name: 'City Hospital',
+                relation: 'Medical',
+                phone: '+91-11-23456789',
+                type: 'emergency',
+                icon: 'fas fa-hospital'
+            },
+            {
+                name: 'Rahul Sharma',
+                relation: 'Son',
+                phone: '+91-9876543211',
+                type: 'family',
+                icon: 'fas fa-child'
+            }
+        ];
+
+        // Recent calls data
+        let recentCalls = JSON.parse(localStorage.getItem('guardianEyeRecentCalls')) || [];
+
+        function renderQuickContacts() {
+            const grid = document.getElementById('quickContactsGrid');
+            grid.innerHTML = '';
+
+            quickContacts.forEach(contact => {
+                const card = document.createElement('div');
+                card.className = 'contact-card';
+                
+                card.innerHTML = `
+                    <div class="contact-icon">
+                        <i class="${contact.icon}"></i>
+                    </div>
+                    <h3>${contact.name}</h3>
+                    <p>${contact.relation}</p>
+                    <span class="contact-number">${contact.phone}</span>
+                    <div class="contact-actions">
+                        <a href="tel:${contact.phone}" class="btn btn-primary" onclick="logEmergencyCall('${contact.phone}', '${contact.name}')">
+                            <i class="fas fa-phone"></i> Call Now
+                        </a>
+                        <button class="btn btn-success" onclick="sendMessage('${contact.phone}')">
+                            <i class="fas fa-sms"></i> Message
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function renderRecentCalls() {
+            const list = document.getElementById('recentCallsList');
+            
+            if (recentCalls.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #7f8c8d;">
+                        <i class="fas fa-phone-slash fa-3x" style="margin-bottom: 20px;"></i>
+                        <h3>No Recent Calls</h3>
+                        <p>Your emergency calls will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = '';
+            
+            recentCalls.slice(0, 5).forEach(call => {
+                const callItem = document.createElement('div');
+                callItem.className = 'call-item';
+                
+                const timeAgo = getTimeAgo(call.timestamp);
+                
+                callItem.innerHTML = `
+                    <div class="call-info">
+                        <div class="call-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="call-details">
+                            <h4>${call.contact}</h4>
+                            <p>${call.number} • ${timeAgo}</p>
+                        </div>
+                    </div>
+                    <div class="call-actions">
+                        <a href="tel:${call.number}" class="btn btn-outline" onclick="logEmergencyCall('${call.number}', '${call.contact}')">
+                            <i class="fas fa-phone"></i> Call Again
+                        </a>
+                    </div>
+                `;
+                
+                list.appendChild(callItem);
+            });
+        }
+
+        function logEmergencyCall(number, contact) {
+            const call = {
+                number: number,
+                contact: contact,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Add to recent calls
+            recentCalls.unshift(call);
+            
+            // Keep only last 10 calls
+            if (recentCalls.length > 10) {
+                recentCalls = recentCalls.slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('guardianEyeRecentCalls', JSON.stringify(recentCalls));
+            
+            // Update display
+            renderRecentCalls();
+            
+            // Log the call (in real app, this would be an API call)
+            console.log(`Emergency call logged: ${contact} (${number})`);
+        }
+
+        function sendMessage(phone) {
+            const message = prompt('Enter your message:');
+            if (message) {
+                // In a real app, this would send an SMS
+                alert(`Message sent to ${phone}: "${message}"`);
+            }
+        }
+
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const callTime = new Date(timestamp);
+            const diffMs = now - callTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} min ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderQuickContacts();
+            renderRecentCalls();
+        });
+    </script>
+</body>
+</html>
